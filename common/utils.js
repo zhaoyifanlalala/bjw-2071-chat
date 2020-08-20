@@ -25,7 +25,7 @@ function getRandomAvatar() {
  * 格式化时间
  */
 function formatTime(time) {
-  return moment(time).locale('zh_cn').format('YYYY MMMDo dddd HH:mm:ss')
+  return moment(time).locale('zh_cn').format('YYYY MMMDo dddd aHH:mm:ss')
 }
 
 

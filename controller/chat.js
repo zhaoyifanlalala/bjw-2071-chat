@@ -79,11 +79,22 @@ async function addContent(ctx,next) {
 
   }
 
+  //获取最新聊天记录
   let data=await services.getContent()
   // console.log(data)
   ctx.response.body = {
     data,
     status:'success'
+  }
+
+}
+
+
+async function longPollContent(ctx,next) {
+
+  const data =await services.getContent()
+  ctx.response.body={
+    data
   }
 
 }
@@ -95,5 +106,6 @@ module.exports = {
   login,
   chat,
   chatLogin,
-  addContent
+  addContent,
+  longPollContent
 }

@@ -8,5 +8,7 @@ module.exports =  (router) => {
   router.get('/chat',controller.chat)
 
   router.post('/addContent',controller.addContent)
+
+  router.get('/longPollContent',controller.longPollContent)
 }
   

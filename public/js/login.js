@@ -12,7 +12,7 @@ btnEle.onclick = function () {
     // console.log(nickName)
     $.ajax({
       type: 'post',
-      url: 'http://192.168.199.178:3000/chat/login',
+      url: 'http://localhost:3000/chat/login',
       data:{
         nickName
       },
