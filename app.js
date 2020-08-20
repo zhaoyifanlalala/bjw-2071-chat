@@ -17,9 +17,11 @@ const cors = require('koa2-cors')
 // const mongoose = require('mongoose')
 
 const {initConnection} = require('./models/connection')
+const nunjucksEnv = require('nunjucks')
 
 const config = require('./config')
 const routes = require('./routes')
+const { formatTime } = require('./common/utils')
 
 const port = process.env.PORT || config.port
 
@@ -37,12 +39,21 @@ app.use(bodyparser())
   }))
   .use(require('koa-static')(__dirname + '/public'))
   .use(views(path.join(__dirname, '/views'), {
-    options: {settings: {views: path.join(__dirname, 'views')}},
+    options: { nunjucksEnv },
     map: {'njk': 'nunjucks'},
     extension: 'njk'
   }))
   .use(router.routes())
   .use(router.allowedMethods())
+
+
+
+nunjucksEnv.configure(path.join(__dirname, '/views'),{
+
+  trimBlocks: true,
+  lstripBlocks: true
+}).addFilter('formatTime',formatTime)
+
 
 // logger
 app.use(async (ctx, next) => {

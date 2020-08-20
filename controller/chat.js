@@ -1,3 +1,5 @@
+const { getRandomAvatar } = require('../common/utils')
+const services = require('../services/chat')
 
 /**
  * login 页面
@@ -14,11 +16,11 @@ async function chatLogin(ctx,next) {
 
   const { nickName } = ctx.request.body
 
-  ctx.cookies.set('user',JSON.stringify({ nickName }),{ maxAge: 24 * 60 * 60 * 1000 })
+  const avatar = getRandomAvatar()
+
+  ctx.cookies.set('user',JSON.stringify({ nickName, avatar }),{ maxAge: 24 * 60 * 60 * 1000 })
 
   if (nickName) {
-
-    // ctx.redirect('/chat')
 
     ctx.response.body = {status: 'success'}
 
@@ -35,7 +37,19 @@ async function chat(ctx,next) {
     user = JSON.parse(user)
 
     if (user.nickName) {
-      await ctx.render('chat')
+      
+      const contents = await services.getContent()
+
+      //和前端页面连接，登录后可以显示名字
+      ctx.state = {
+
+        nickName: user.nickName,
+        avatar: user.avatar,
+        contents
+
+      }
+      await ctx.render('chat',ctx.state)
+
     }else{
       ctx.redirect('/')
     }
@@ -47,8 +61,39 @@ async function chat(ctx,next) {
 }
 
 
+
+/**
+ * 添加聊天输入的内容
+ */
+async function addContent(ctx,next) {
+  
+  let user = ctx.cookies.get('user')
+
+  const { content } = ctx.request.body
+
+  if (user) {
+
+    const { nickName, avatar } = JSON.parse(user)
+
+    await services.addContent({ nickName, avatar, content, createdAt:new Date()})
+
+  }
+
+  let data=await services.getContent()
+  // console.log(data)
+  ctx.response.body = {
+    data,
+    status:'success'
+  }
+
+}
+
+
+
+
 module.exports = {
   login,
   chat,
-  chatLogin
+  chatLogin,
+  addContent
 }

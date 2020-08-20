@@ -1,15 +1,51 @@
 {% extends 'layout.njk' %}
 {% block content %}
-    <div>
-        chat
-    </div>
-    
-{% endblock %}
+    <div class="chat-container">
+        <div class="chat-header">
+            {{ nickName }}
+        </div>
 
-{% block style %}
-    <link rel='stylesheet', href=''>
-{% endblock %}
+        {# 聊天主体 #}
+        <div class="chat-content">
+            {% for item in contents %}
 
-{% block script %}
-    <script src=""></script>
-{% endblock %}
+                <div class='chat-content-detail clearFix'>
+
+                    <div class="chat-detail-left">
+
+                        <img src='{{ item.avatar }}' class="chat-avatar">
+                        <div class="chat-name">{{ item.nickName}}</div>
+
+                    </div>
+
+                    <div class="chat-detail-right">
+                        {{ item.content}}
+                    </div>
+
+                </div>
+
+                <div style="clear:both"></div>
+
+                <div class="chat-time">
+                    {{ item.createdAt | formatTime}}
+                </div>
+
+                {% endfor%}
+                
+            </div>
+
+            {# 聊天输入框 #}
+            <div class="chat-input-container">
+                <i class="fa fa-smile-o fa-2x chat-input-smile"></i>
+                <input class="chat-input" placeholder="输入聊天内容。。。" value="">
+            </div>
+        </div>
+    {% endblock %}
+
+    {% block style %}
+        <link rel='stylesheet' href='/css/chat.css'>
+    {% endblock %}
+
+    {% block script %}
+        <script src="/js/chat.js"></script>
+    {% endblock %}
