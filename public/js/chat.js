@@ -3,9 +3,9 @@ let inputEle = document.getElementsByClassName('chat-input')[0]
 let timer
 
 
-stopTimer()
+// stopTimer()
 
-longPolling()
+// longPolling()
 
 window.onload=function(){
 
