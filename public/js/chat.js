@@ -2,10 +2,14 @@ let inputEle = document.getElementsByClassName('chat-input')[0]
 
 let timer
 
+// 初始化的数据
+let originData
 
-// stopTimer()
+stopTimer()
 
-// longPolling()
+longPolling()
+
+getOriginData()
 
 window.onload=function(){
 
@@ -31,6 +35,7 @@ inputEle.onkeydown = function (e) {
           // if (result.status === 'success') {
           renderChat(result.data)
 
+          originData=result.data
           inputEle.value = ''
 
         }
@@ -76,7 +81,30 @@ function renderChat(data) {
   //重新渲染
   $('.chat-content').html(html)
 
-  $('.chat-content').scrollTop($('.chat-content').prop('scrollHeight'))
+  // $('.chat-content').scrollTop($('.chat-content').prop('scrollHeight'))
+}
+
+// function getOriginData(){
+
+//   // 获取原始数据
+//   $.ajax({
+//     success:(result)=>{
+
+//       originData = result.contents
+//     }
+//   })
+// }
+
+
+function getOriginData(){
+  $.ajax({
+    type:'get',
+    url:'http://localhost:3000/longPollContent',
+    data:{},
+    success:(result)=>{
+      originData=result.data
+    }
+  })
 }
 
 /**
@@ -91,6 +119,22 @@ function longPolling() {
       success:(result)=>{
 
         renderChat(result.data)
+
+        let times = 0
+        result.data.filter((item)=>{
+
+          if( moment(originData[originData.length  - 1].createdAt).isBefore(moment(item.createdAt)) ){
+            times ++
+          }
+        })
+        
+        if(times>0){
+          //如果有新信息，渲染消息框
+          renderWarning(times)
+        }else{
+          console.log('没有新消息')
+        }
+
       }
     })
   },2000)
@@ -101,4 +145,23 @@ function stopTimer() {
   if (timer) {
     clearInterval(timer)
   }
+}
+
+
+
+let warningEle=document.getElementsByClassName('warning')[0]
+function renderWarning(times){
+  if(times>0){
+    let warninghtml='有'+times+'条新消息'
+    $('.warning').html(warninghtml)
+    warningEle.style.display='block'
+  }
+}
+
+
+
+warningEle.onclick=function(){
+  $('.chat-content').scrollTop($('.chat-content').prop('scrollHeight'))
+  warningEle.style.display='none'
+  getOriginData()
 }
